@@ -1,0 +1,206 @@
+// pages/profile.tsx
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import Image from 'next/image'
+import Overview from './overview'
+import Member from './member'
+import Update from './update'
+import getItemSession from "../Function/sessionFunction";
+import axios from "axios";
+import actionDB from "@/pages/api/DB/actionDB";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchYoungInfor, fetchYoungMember } from "@/pages/api/redux/youngDataSlide";
+import { appDispatch, rootState } from "@/pages/api/redux/store";
+import { useLoading } from "../loadingPages/loadingContext";
+import excell_export_members from "../Function/excell_export_members";
+import Mass from "./mass";
+
+
+
+type page = "overview" | "member" | "updateInfor" | "adminManageMember" | "mass"
+
+export default function ProfilePage() {
+    const [collapsed, setCollapsed] = useState(false);
+    const [page, setPage] = useState<page>('overview');
+    const [user, setUser] = useState({ role: null, username: null });
+    // const [infor, setInfor] = useState(null)
+
+    const { setIsLoading } = useLoading();
+    const dispatch = useDispatch<appDispatch>();
+
+
+    const router = useRouter();
+    const { loading, infor } = useSelector((state: rootState) => state.youngData)
+
+
+
+    useEffect(() => {
+        if (getItemSession() !== 'undefined') {
+            setUser(JSON.parse(getItemSession()))
+            const user = JSON.parse(getItemSession()).username
+            setIsLoading(true)
+            if (user)
+                dispatch(fetchYoungInfor({ user_token: user }));
+            dispatch(fetchYoungMember());
+            setIsLoading(false)
+        }
+        else
+            router.push('/')
+    }, [user.username])
+
+    async function create_capcha_code() {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let code = '';
+
+        for (let i = 0; i < 10; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            code += characters[randomIndex];
+        }
+
+        await axios.post("/api/DB/CRUBcapchaCode", { "action": actionDB.CREATE, "data": { "capcha_code": code } })
+            .then((data) => {
+                alert(`Captcha : ${data.data.capcha_code}
+                    \n Lưu ý mã captcha chỉ sử dụng 1 lần cho 1 người tạo tài khoản
+                    \n Click ok để đóng và copy mã captcha`)
+                navigator.clipboard.writeText(data.data.capcha_code)
+                    .then(() => { console.log("coppy success") })
+                    .catch((error) => console.log("coppy failed"))
+            })
+    }
+
+    return (
+        <div className="d-flex vh-100">
+
+            {/* Sidebar */}
+            <aside
+                className={`text-white vh-100 position-relative ${collapsed ? 'bg-light' : 'bg-dark'}`}
+                style={{
+                    width: collapsed ? "0px" : "min(150px,30%)",
+                    transition: "width 0.3s ease",
+                }}
+            >
+
+                <ul className="nav flex-column mt-4">
+                    <li className="nav-item mb-5" style={{ padding: 0 }}>
+
+                        <a
+
+                            className={`nav-link text-start ${collapsed ? "text-center" : ""
+                                }`}
+                        >
+                            {!collapsed && <button className='mr-1 btn '
+
+                            >
+                                <Image onClick={() => router.push('/')} src={'/church.jpeg'} priority width={55} height={50} alt='Home icon' className='rounded-circle m-lg-0' />
+                            </button>}
+                        </a>
+                    </li>
+
+                    {
+                        (user?.role === 1 || user?.role === 2 || user?.role === 3)
+                        &&
+                        (
+                            <>
+                                <li className="nav-item " style={{ padding: 10 }}>
+                                    <a
+                                        onClick={() => setPage("overview")}
+                                        className={` ${collapsed ? "text-center" : "text-start"} text-white`}
+                                    >
+                                        <i className="bi bi-person"></i>
+                                        {!collapsed && <span className="ms-2" style={page === "overview" ? { color: '#00f1ff' } : {}}>Thông tin</span>}
+                                    </a>
+                                </li>
+                                <li className="nav-item" style={{ padding: 10 }}>
+                                    <a
+                                        onClick={() => setPage("updateInfor")}
+                                        className={` ${collapsed ? "text-center" : "text-start"} text-white`}
+                                    >
+                                        <i className="bi bi-shield-lock"></i>
+                                        {!collapsed && <span className="ms-2" style={page === "updateInfor" ? { color: '#00f1ff' } : {}}>Cập nhật</span>}
+                                    </a>
+                                </li>
+                                {
+                                    (user?.role === 3) &&
+                                    <li className="nav-item" style={{ padding: 10 }}>
+                                        <a
+                                            onClick={() => setPage("member")}
+                                            className={` ${collapsed ? "text-center" : "text-start"} text-white`}
+                                        >
+                                            <i className="bi bi-gear"></i>
+                                            {!collapsed && <span className="ms-2" style={page === "member" ? { color: '#00f1ff' } : {}}>Thành viên</span>}
+                                        </a>
+                                    </li>
+                                }
+                            </>
+                        )
+                    }
+
+                    {
+                        (user?.role === 0 || user?.role === 1 || user?.role === 2)
+                        &&
+                        (
+                            <div>
+                                <li className="nav-item" style={{ padding: 10 }}>
+                                    <a
+                                        onClick={() => setPage("member")}
+                                        className={` ${collapsed ? "text-center" : "text-start"} text-white`}
+                                    >
+                                        <i className="bi bi-gear"></i>
+                                        {!collapsed && <span className="ms-2" style={page === "member" ? { color: '#00f1ff' } : {}}>QL Thành viên</span>}
+                                    </a>
+                                </li>
+                                {
+                                    (user?.role === 1 || user?.role === 2) &&
+                                    <li className="nav-item" style={{ padding: 10 }}>
+                                        <a
+                                            onClick={() => setPage("mass")}
+                                            className={` ${collapsed ? "text-center" : "text-start"} text-white`}
+                                        >
+                                            <i className="bi bi-gear"></i>
+                                            {!collapsed && <span className="ms-2" style={page === "mass" ? { color: '#00f1ff' } : {}}>devide</span>}
+                                        </a>
+                                    </li>
+                                }
+                                <li className="nav-item" style={{ padding: 10 }}>
+                                    <a
+                                        onClick={create_capcha_code}
+                                        className={` ${collapsed ? "text-center" : "text-start"} text-white`}
+                                    >
+                                        <i className="bi bi-gear"></i>
+                                        {!collapsed && <span className="ms-2">Lấy CAPTCHA</span>}
+                                    </a>
+                                </li>
+
+                            </div>
+                        )
+                    }
+
+                </ul>
+
+                {/* Border Button */}
+                <button
+                    className="btn position-absolute"
+                    style={{
+                        right: "-15px", // Position outside the sidebar
+                        top: "50%", // Center vertically
+                        transform: "translateY(-50%)", // Perfect vertical centering
+                        zIndex: 1000, // Ensure it stays above other elements
+                    }}
+                    onClick={() => setCollapsed(!collapsed)}
+                >
+                    <i style={{ color: 'white', fontSize: 25, ...(collapsed ? { marginRight: -12 } : { marginRight: 5 }) }} className={`bg-black bi ${collapsed ? "bi-chevron-right" : "bi-chevron-left"}`}>{collapsed ? '>' : '<'}</i>
+                </button>
+            </aside>
+
+
+            {/* Main Content */}
+            <main className="flex-grow-1 p-4 overflow-y-scroll">
+                {page === 'overview' && <Overview />}
+                {page === 'member' && <Member />}
+                {page === 'updateInfor' && <Update />}
+                {page === 'mass' && <Mass />}
+            </main>
+        </div >
+    );
+}
+

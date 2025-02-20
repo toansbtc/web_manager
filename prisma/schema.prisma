@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model account_role {
+  role       Int
+  is_active  Boolean
+  user_token String  @id @db.VarChar(255)
+  password   String?
+  infor      infor?  @relation("accountRole_Infor")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model image_path {
+  image_path    String?
+  id_image_path Int             @id @unique @default(autoincrement())
+  farther_intro farther_intro[]
+  infor         infor[]
+  // active_title    active_title?   @relation("ActiveTitleToImagePath", fields: [id_active_title], references: [id])
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model infor {
+  // id                     Int           @id @unique @default(autoincrement())
+  user_token_infor  String       @id
+  birth_day         String?
+  name              String?
+  number_phone      String?
+  address           String?
+  situation         String?
+  job               String?
+  self_introduc     String?
+  reading           Boolean      @default(false)
+  id_avata_img_path Int?
+  image_path        image_path?  @relation(fields: [id_avata_img_path], references: [id_image_path], onDelete: Cascade, map: "fk_image_path")
+  account_role      account_role @relation("accountRole_Infor", fields: [user_token_infor], references: [user_token])
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model farther_intro {
+  name          String?     @db.VarChar(255)
+  time_start    DateTime?   @db.Date
+  office        String?     @db.VarChar(255)
+  introduction  String?
+  id            Int         @id @default(autoincrement())
+  id_image_path Int?
+  image_path    image_path? @relation(fields: [id_image_path], references: [id_image_path], onDelete: Cascade, map: "fk_image_path")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model intro_home {
+  id        Int     @id @default(autoincrement())
+  introduct String?
+  type      String?
+}
+
+model capcha_code {
+  id          Int     @id @default(1)
+  capcha_code String?
+}
+
+model active_title {
+  id         Int     @id @default(autoincrement())
+  title      String?
+  list_image String?
+  // image_path image_path[] @relation("ActiveTitleToImagePath")
+}
