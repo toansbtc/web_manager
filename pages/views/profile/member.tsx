@@ -1,12 +1,13 @@
 import { appDispatch, rootState } from '@/pages/api/redux/store';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import excell_export_members from '../Function/excell_export_members';
+// import excell_export_members from '../Function/excell_export_members';
 import Image from 'next/image';
 import getDrivePath from '../Function/getDrivePath';
 import axios from 'axios';
 import actionDB from '@/pages/api/DB/actionDB';
-import { updateMember as updateMembers } from '@/pages/api/redux/youngDataSlide';
+// import XLSX from 'xlsx'
+// import { updateMember as updateMembers } from '@/pages/api/redux/youngDataSlide';
 
 const statusMap: Record<string, string> = {
     single: "Độc thân",
@@ -58,6 +59,44 @@ export default function member() {
             return newMember
         })
 
+    }
+
+    const export_excell = async () => {
+        let XLSX: typeof import('xlsx') | undefined = undefined;
+
+        if (typeof window !== 'undefined') {
+            import('xlsx').then((mod) => {
+                XLSX = mod;
+            });
+
+            if (!XLSX) XLSX = await import('xlsx');
+
+            const array_excell_member: any[][] = []
+            const array_member: any[] = [...member]
+            array_excell_member.push(['Họ Tên', 'Chức vụ', 'Ngày sinh', 'SĐT', 'Công việc', 'Địa chỉ'])
+            Array.from(array_member).map((value) => {
+                array_excell_member.push([value.infor?.name, value?.role === 1 ? 'Trưởng nhóm' : value?.role === 2 ? 'Phó nhóm' : 'Thành viên',
+                value.infor?.birth_day, value.infor?.number_phone, value.infor?.job, value.infor?.address])
+            })
+            const workbook = XLSX.utils.book_new();
+            console.log(array_excell_member)
+            const workSheet = XLSX.utils.aoa_to_sheet(array_excell_member)
+            XLSX.utils.book_append_sheet(workbook, workSheet, 'Thông tin')
+            const workbookBlob = new Blob([XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+            // const array_member: any[] = member
+            // const workbookBlob = await excell_export_members(array_member)
+            const url = URL.createObjectURL(workbookBlob)
+            const link = document.createElement('a')
+            link.href = url
+            link.download = 'Thông tin thành viên.xlsx'
+            document.body.appendChild(link)
+            link.click();
+            document.body.removeChild(link)
+        }
+        else {
+            alert("Bạn không chạy trên máy tính windows")
+        }
     }
 
     const handleSearch = () => {
@@ -167,7 +206,7 @@ export default function member() {
                         <div >
                             <button className='btn btn-success m-2' onClick={handleSaveChangeMember}>Lưu thay đổi</button>
                             <button className='btn btn-danger m-2' onClick={() => setUpdateMember(member)}>Hủy thay đổi</button>
-                            <button className='btn btn-primary m-2' onClick={() => excell_export_members(member)}>Xuất file excell</button>
+                            <button className='btn btn-primary m-2' onClick={() => export_excell()}>Xuất file excell</button>
                         </div>
                     )
                 }

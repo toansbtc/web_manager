@@ -27,13 +27,13 @@ export default function mass() {
             const getUniqueRandomMember = new Set()
             // const indexRandomMember: string[] = []
 
-            while (getUniqueRandomMember.size < 2) {
+            while (getUniqueRandomMember.size < 3) {
                 const randomIndex = Math.floor(Math.random() * data_coppy_member.length);
                 getUniqueRandomMember.add(data_coppy_member[randomIndex])
                 // indexRandomMember.push(randomIndex.toString())
             }
             const arraySet = Array.from(getUniqueRandomMember) as any[]
-            const accept = confirm(`1,${arraySet[0]?.infor?.name} \n2,${arraySet[1]?.infor?.name}`)
+            const accept = confirm(`1,${arraySet[0]?.infor?.name} \n2,${arraySet[1]?.infor?.name}\nLNTH,${arraySet[2]?.infor?.name}`)
             // indexRandomMember.forEach(value => {
             //     data_coppy_member[parseInt(value)].infor.reading = true
             // })
@@ -41,23 +41,30 @@ export default function mass() {
 
 
             if (accept) {
-                const result = await axios.post('/api/DB/CRUDinfor', {
-                    "action": actionDB.UPDATEMANY,
-                    "data": arraySet
-                })
-                if (result.data) {
-                    try {
-                        sendMessageToUser(arraySet[0]?.user_token, `1:\n ${text1}`)
-                        sendMessageToUser(arraySet[1]?.user_token, `2:\n ${text2}`)
-                        // sendMessageToUser(arraySet[2]?.user_token, `LNTH`)
-                        dispatch(fetchYoungMember)
-                        alert("tin nhắn đã gửi đi")
-                    } catch (error) {
-                        alert("không thể gửi tin nhắn")
-                        console.error(error)
-                    }
 
+                try {
+                    const read1 = await sendMessageToUser(arraySet[0]?.user_token, `1:\n ${text1}`)
+                    const read2 = await sendMessageToUser(arraySet[1]?.user_token, `2:\n ${text2}`)
+                    const read3 = await sendMessageToUser(arraySet[2]?.user_token, `LNTH`)
+                    // dispatch(fetchYoungMember)
+                    let result = null
+                    if (read1.ok && read2.ok && read3.ok) {
+                        result = await axios.post('/api/DB/CRUDinfor', {
+                            "action": actionDB.UPDATEMANY,
+                            "data": arraySet
+                        })
+                    }
+                    if (result?.status === 200)
+                        alert("Tin nhắn đã gửi đi")
+                    else
+                        alert("Lỗi khi gửi tin nhắn")
+
+                } catch (error) {
+                    alert("không thể gửi tin nhắn")
+                    console.error(error)
                 }
+
+
             }
         }
         else
