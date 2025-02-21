@@ -16,7 +16,6 @@ export default async function prisma_sql(req: NextApiRequest, res: NextApiRespon
         switch (action) {
             case ActionDB.NATIVESQL:
                 const sql = formData.sql;
-                console.log(sql)
                 result = await prisma.$queryRaw(Prisma.sql([sql]))
                 break;
             case ActionDB.GETLISTDATA:

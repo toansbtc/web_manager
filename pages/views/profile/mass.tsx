@@ -50,7 +50,7 @@ export default function mass() {
                                 "sql": `select page_access_token from token`
                             }
                         })
-                    const acess_token = accessToken[0].page_access_token;
+                    const acess_token = accessToken.data[0].page_access_token;
                     const read1 = await sendMessageToUser(arraySet[0]?.user_token, `1:\n ${text1}`, acess_token)
                     const read2 = await sendMessageToUser(arraySet[1]?.user_token, `2:\n ${text2}`, acess_token)
                     const read3 = await sendMessageToUser(arraySet[2]?.user_token, `LNTH`, acess_token)
