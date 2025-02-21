@@ -110,8 +110,6 @@ export default function loggin_registerModal() {
 
       const fbUserID = user.providerData.find((data) => data.providerId === "facebook.com").uid
 
-      sendMessageToUser(fbUserID, "wellcome to website")
-
       await axios.post('/api/DB/CRUDaccountRole', { "action": actionDB.GETDATA, "data": { "user_token": fbUserID } })
         .then((data) => {
           console.log(data)

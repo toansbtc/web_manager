@@ -72,3 +72,8 @@ model active_title {
   list_image String?
   // image_path image_path[] @relation("ActiveTitleToImagePath")
 }
+
+model token {
+  id                Int     @id @default(autoincrement())
+  page_access_token String?
+}

@@ -1,21 +1,21 @@
-export default function sendMessageToUser(userID, messageText) {
+import axios from "axios";
+
+export default function sendMessageToUser(userID, messageText, pageAccessToken) {
     if (typeof window !== 'undefined') {
-        const url = "https://graph.facebook.com/v15.0/me/messages";
-        const pageAccessToken = process.env.pageAccessToken;
+        const url = "https://graph.facebook.com/v22.0/me/messages?access_token=" + pageAccessToken;
 
-
-        const response = fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${pageAccessToken}`,
-            },
-            body: JSON.stringify({
-                messaging_type: "RESPONSE",
+        const response = axios.post(url,
+            {
                 recipient: { id: userID },
-                message: { text: messageText },
-            }),
-        });
+                messaging_type: "RESPONSE",
+                message: { text: messageText }
+            },
+            {
+                headers: {
+                    'Content-Type': "application/json"
+                }
+            }
+        )
         return response
     }
 }

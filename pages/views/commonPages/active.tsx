@@ -249,7 +249,12 @@ export default function active() {
               <div className='row text-center'>
                 {section.images?.map((value, index) => (
                   <div className="col-md-4 col-sm-6 mb-3" key={index}>
-                    <img src={value} className="card-img-top" alt="Image 1" onLoad={() => { setLoadImage(false) }} />
+                    <img src={value} className="card-img-top" alt="Image 1" onLoad={() => { setLoadImage(false) }} style={{
+                      width: 'max(365,30%)',
+                      height: 150,
+                      objectFit: 'cover',
+                      borderRadius: 8
+                    }} />
                   </div>
                 ))}
                 {(user.role === 0 || user.role === 1) && <div className="col-md-4 col-sm-6 mb-3 justify-content-center align-content-center">

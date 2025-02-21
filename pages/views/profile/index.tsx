@@ -157,7 +157,7 @@ export default function ProfilePage() {
                                             className={` ${collapsed ? "text-center" : "text-start"} text-white`}
                                         >
                                             <i className="bi bi-gear"></i>
-                                            {!collapsed && <span className="ms-2" style={page === "mass" ? { color: '#00f1ff' } : {}}>devide</span>}
+                                            {!collapsed && <span className="ms-2" style={page === "mass" ? { color: '#00f1ff' } : {}}>Thánh lễ tuần 3</span>}
                                         </a>
                                     </li>
                                 }

@@ -43,12 +43,20 @@ export default function mass() {
             if (accept) {
 
                 try {
-                    const read1 = await sendMessageToUser(arraySet[0]?.user_token, `1:\n ${text1}`)
-                    const read2 = await sendMessageToUser(arraySet[1]?.user_token, `2:\n ${text2}`)
-                    const read3 = await sendMessageToUser(arraySet[2]?.user_token, `LNTH`)
+                    const accessToken = await axios.post('/api/DB/CRUDaccountRole',
+                        {
+                            "action": actionDB.NATIVESQL,
+                            "data": {
+                                "sql": `select page_access_token from token`
+                            }
+                        })
+                    const acess_token = accessToken[0].page_access_token;
+                    const read1 = await sendMessageToUser(arraySet[0]?.user_token, `1:\n ${text1}`, acess_token)
+                    const read2 = await sendMessageToUser(arraySet[1]?.user_token, `2:\n ${text2}`, acess_token)
+                    const read3 = await sendMessageToUser(arraySet[2]?.user_token, `LNTH`, acess_token)
                     // dispatch(fetchYoungMember)
                     let result = null
-                    if (read1.ok && read2.ok && read3.ok) {
+                    if (read1.status === 200 && read2.status === 200 && read3.status === 200) {
                         result = await axios.post('/api/DB/CRUDinfor', {
                             "action": actionDB.UPDATEMANY,
                             "data": arraySet
@@ -95,7 +103,7 @@ export default function mass() {
     return (
         <div className="container d-flex flex-column align-items-center justify-content-center h-100">
             <div className="card shadow-none p-4" style={{ width: "100%" }}>
-                <h4 className="text-center text-primary mb-3">Beautiful Text Area</h4>
+                <h4 className="text-center text-primary mb-3">Phụng vụ TL</h4>
 
                 {/* Textarea */}
                 <form onSubmit={handleSubmit}>
