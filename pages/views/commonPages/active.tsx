@@ -247,9 +247,9 @@ export default function active() {
               transition: "transform 0.3s ease-in-out",
             }}>
               <div className='row text-center'>
-                {section.images?.map((value, index) => (
+                {section?.images.map((value, index) => (
                   <div className="col-md-4 col-sm-6 mb-3" key={index}>
-                    <img src={value} className="card-img-top" alt="Image 1" onLoad={() => { setLoadImage(false) }} style={{
+                    <img src={value} className="card-img-top" alt="Image 1" onLoad={() => { setLoadImage(false) }} onError={() => { setLoadImage(false) }} style={{
                       width: 'max(365,30%)',
                       height: 150,
                       objectFit: 'cover',
