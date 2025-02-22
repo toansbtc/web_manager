@@ -7,6 +7,8 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useLoading } from '../loadingPages/loadingContext';
 import getItemSession from '../Function/sessionFunction';
+import cloudinary_config from '@/pages/api/config/cloudinary_config';
+import actionDB from '@/pages/api/DB/actionDB';
 
 
 export default function active() {
@@ -144,16 +146,47 @@ export default function active() {
   };
 
 
+  const deleteActivity = async (idActivity) => {
+    try {
+
+
+      const activity = data_image.find(value => value.id === idActivity)
+      const confirm_delete_action = confirm("Bạn có chắc chắn xóa " + activity.title)
+      if (confirm_delete_action) {
+        setIsLoading(true)
+        if (activity) {
+          const list_id_image: string[] = [];
+          activity.images.map(value => {
+            const id = value.substring(value.length - 24, value.length - 4)
+            list_id_image.push(id);
+          })
+          if (list_id_image.length > 0) {
+            const result = await axios.post("/api/controller/cloudinary", { "action": actionDB.DELETE, "list_id_image": list_id_image })
+            if (result.status === 200) {
+              const awaitDelete = await axios.post('/api/DB/CRUDactiveTitle', { "action": actionDB.DELETE, "data": { "id": idActivity } })
+              if (awaitDelete.status === 200) {
+                const update_data_image = list_image_active.filter(value => value.id !== idActivity)
+                dispatch(updateActiveImage(update_data_image))
+                alert('Xóa hoạt động thành công!!! ')
+              }
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error)
+    }
+    finally {
+      setIsLoading(false)
+    }
+  }
+
 
   return (
     <div className="container mt-5">
 
       {/* Button to Open Modal */}
-      {(user.role === 0 || user.role === 1) && <div className='w-100 text-center'>
-        <button className="btn btn-success " onClick={() => { setShow(true), setID(-1) }}>
-          Thêm mới
-        </button>
-      </div>}
+
 
       {/* Bootstrap Modal */}
       {show && (
@@ -219,24 +252,32 @@ export default function active() {
       {/* Display Uploaded Images */}
 
 
-      <div className="pt-4 pb-4">
-        {data_image !== null && data_image?.map((section, index) => (
+      <div className="pt-0">
+        <div className='h-100 bg-danger-subtle text-center'><h2 style={{ color: '#76109fe0' }}>Các hoạt động Giáo Xứ</h2></div>
+        {(user.role === 0 || user.role === 1) && <div className='w-100 text-center'>
+          <button className="btn btn-success " onClick={() => { setShow(true), setID(-1) }}>
+            Thêm mới
+          </button>
+        </div>}
+        {(data_image !== null && data_image.length > 0) ? data_image?.map((section, index) => (
           <div key={index} className="transition-all duration-300">
             {/* Title (Click to Expand/Collapse) */}
             <div
-              className={`w-100 bg-light mt-1
+              className={`w-100 bg-light mt-1 position-relative
                 ${expandedSections[section.title] ? "mb-3" : "mb-0"}`}
-              onClick={() => toggleSection(section.title)}
+
               style={{ backgroundColor: 'rgb(111 237 0)' }}
             >
-              <span className="text-lg" style={{ color: 'rgb(27 10 249)' }}>
+              <span className="text-lg" style={{ color: 'rgb(27 10 249)' }} onClick={() => toggleSection(section.title)}>
                 <span style={{
                   marginRight: 10,
                   display: "inline-block",
                   transition: "transform 0.3s ease-in-out",
                   transform: expandedSections[section.title] ? "rotate(0deg)" : "rotate(-90deg)"
                 }}>▼</span>
-                {section.title}</span>
+                {section.title}
+              </span>
+              {(user.role === 0 || user.role === 1) && <a onClick={() => deleteActivity(section.id)} className=' position-absolute justify-content-end' style={{ right: 5, color: 'red', fontWeight: 'bold' }}>Xóa</a>}
             </div>
 
 
@@ -265,7 +306,10 @@ export default function active() {
             }
           </div>
         )
-        )
+        ) :
+          <div className='text-center pt-2'>
+            <h5 style={{ color: '#5b409b' }}>Hiện không có hoạt động</h5>
+          </div>
         }
       </div>
     </div>

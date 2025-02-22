@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import cloudinary_config from "../config/cloudinary_config";
 import fs from "fs/promises";
 import { Fields, Files, IncomingForm } from "formidable";
+import actionDB from "../DB/actionDB";
 
 export const config = {
   api: {
@@ -27,29 +28,39 @@ export default async function cloudinary(req: NextApiRequest, res: NextApiRespon
 
   try {
 
-    const { files } = await parseForm(req);
-
-    console.log("files")
-
-    if (!files.file) {
-      return res.status(400).json({ error: "No files uploaded" });
+    const { fields, files } = await parseForm(req);
+    const actionData = Array.isArray(fields?.action) ? fields?.action[0] : fields?.action
+    if (actionData === actionDB.DELETE) {
+      const list_id_image = fields.list_id_image;
+      await Promise.all(
+        list_id_image.map(id => cloudinary_config.uploader.destroy(`uploads/${id}`)))
+      return res.status(200).json({ mesage: "success" })
     }
+    else {
 
-    const fileList = Array.isArray(files.file) ? files.file : [files.file];
+      console.log("files")
 
-    let uploadedUrls = "";
+      if (!files.file) {
+        return res.status(400).json({ error: "No files uploaded" });
+      }
 
-    for (const file of fileList) {
-      console.log(`Uploading: ${file.originalFilename}`);
+      const fileList = Array.isArray(files.file) ? files.file : [files.file];
 
-      const result = await cloudinary_config.uploader.upload(file.filepath, {
-        folder: "uploads",
-      });
+      let uploadedUrls = "";
 
-      uploadedUrls += result.secure_url + ",";
+      for (const file of fileList) {
+        console.log(`Uploading: ${file.originalFilename}`);
+
+        const result = await cloudinary_config.uploader.upload(file.filepath, {
+          folder: "uploads",
+        });
+
+        uploadedUrls += result.secure_url + ",";
+      }
+      console.log(uploadedUrls)
+
+      return res.status(200).json({ urls: uploadedUrls.substring(0, uploadedUrls.length - 1) });
     }
-    console.log(uploadedUrls)
-    return res.status(200).json({ urls: uploadedUrls.substring(0, uploadedUrls.length - 1) });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: error.message });
