@@ -100,9 +100,9 @@ export default function index() {
 
   // get image path form data
   useEffect(() => {
-    if (imageIntroduct.introduct) {
-      const data = imageIntroduct.introduct.split('\n')
-      setOnChangeImagePath(imageIntroduct.introduct)
+    if (imageIntroduct?.introduct) {
+      const data = imageIntroduct?.introduct.split('\n')
+      setOnChangeImagePath(imageIntroduct?.introduct)
       setImageList(data)
       console.log("image list path", imageList)
     }

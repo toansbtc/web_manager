@@ -1,8 +1,25 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient }
+declare global {
+    var prisma: PrismaClient | undefined;
+}
 
-export const prisma =
-    globalForPrisma.prisma ||
-    new PrismaClient({ log: ['query'], })
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+const prisma = global.prisma || new PrismaClient({ log: ["error"] });
+
+if (process.env.NODE_ENV !== "production") {
+    global.prisma = prisma;
+}
+
+process.on("SIGINT", async () => {
+    await prisma.$disconnect();
+    console.log("Prisma disconnected due to SIGINT");
+    process.exit(0);
+});
+
+process.on("SIGTERM", async () => {
+    await prisma.$disconnect();
+    console.log("Prisma disconnected due to SIGTERM");
+    process.exit(0);
+});
+
+export default prisma;

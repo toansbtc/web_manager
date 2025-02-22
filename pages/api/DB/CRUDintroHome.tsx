@@ -1,13 +1,13 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import ActionDB from "./actionDB"
-import { where } from "firebase/firestore";
+import prisma from "./prisma";
 
-const prisma = new PrismaClient({
-    log: ["error"],
-})
+// const prisma = new PrismaClient({
+//     log: ["error"],
+// })
 
-prisma.$connect()
+// prisma.$connect()
 export default async function prisma_sql(req: NextApiRequest, res: NextApiResponse) {
     const action = req.body.action;
     const formData = req.body.data;
