@@ -8,6 +8,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         const token = req.query["hub.verify_token"];
         const challenge = req.query["hub.challenge"];
 
+        console.log(req)
         if (mode === "subscribe" && token === VERIFY_TOKEN) {
             console.log("WEBHOOK VERIFIED!");
             res.status(200).send(challenge); // ✅ Facebook needs this response
