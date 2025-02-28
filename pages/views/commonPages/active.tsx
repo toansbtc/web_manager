@@ -62,7 +62,7 @@ export default function active() {
     const images = [...list_image_active]
     const array_image: { title: string, images: string[], id: number }[] = [];
     images.map((value) => {
-      console.log(value, value.list_image)
+      // console.log(value, value.list_image)
       array_image.push({ id: value.id, title: value.title, images: value.list_image?.split(',') })
       setExpandedSections((prev) => ({
         ...prev,
@@ -120,7 +120,7 @@ export default function active() {
           axios.post("/api/DB/CRUDactiveTitle",
             { "action": action.UPDATE, "data": { "id": id, "list_image": data_return.data.urls } })
             .then((result) => {
-              console.log(result.data)
+              // console.log(result.data)
               let images = [...list_image_active]
               const index = images.findIndex(value => value.id === id)
               if (index != -1)

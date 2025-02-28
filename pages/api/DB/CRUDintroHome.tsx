@@ -20,7 +20,7 @@ export default async function prisma_sql(req: NextApiRequest, res: NextApiRespon
                 result = await prisma.$queryRaw(Prisma.sql([sql]))
                 break;
             case ActionDB.GETDATA:
-                console.log("formData", formData)
+                // console.log("formData", formData)
                 result = await prisma.intro_home.findFirst({
                     where: {
                         type: formData.type
@@ -28,7 +28,7 @@ export default async function prisma_sql(req: NextApiRequest, res: NextApiRespon
                 })
                 break;
             case ActionDB.CREATE:
-                console.log(formData)
+                // console.log(formData)
                 result = await prisma.intro_home.create({
                     data: {
                         introduct: formData.introduct,

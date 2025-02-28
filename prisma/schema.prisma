@@ -38,6 +38,7 @@ model infor {
   job               String?
   self_introduc     String?
   reading           Boolean      @default(false)
+  can_read          Int          @default(0)
   id_avata_img_path Int?
   image_path        image_path?  @relation(fields: [id_avata_img_path], references: [id_image_path], onDelete: Cascade, map: "fk_image_path")
   account_role      account_role @relation("accountRole_Infor", fields: [user_token_infor], references: [user_token])

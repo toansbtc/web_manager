@@ -14,6 +14,7 @@ const infor_type = {
         number_phone: "",
         self_introduc: "",
         reading: false,
+        canRead: false,
         situation: "",
         image_path: {
             image_path: ""
@@ -70,7 +71,7 @@ const YoungState = createSlice({
         },
         updateMember: (state, action) => {
             state.member = action.payload
-            console.log(state.member)
+            // console.log(state.member)
         }
     },
     extraReducers(builder) {

@@ -3,9 +3,6 @@ import { FacebookAuthProvider, GoogleAuthProvider, createUserWithEmailAndPasswor
 import { getFirestore } from "firebase/firestore"; // For Firestore
 import { getDatabase } from "firebase/database"; // For Realtime Database
 import { getStorage } from "firebase/storage";
-import { UserCredential } from "firebase/auth"
-import data_return from "../../views/decladeInterface/authenInterface";
-import { useRouter } from "next/router";
 
 const fireBase_config = {
     apiKey: "AIzaSyBHDv5qk7zavVDCbV4RFgVIPalu1UUaf6I",

@@ -3,24 +3,29 @@ import router, { useRouter } from 'next/router';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../api//config/fireBase';
 import Image from 'next/image'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { openClose_Login } from '@/pages/api/redux/openClose_logginSlice';
 import getItemSession from '../Function/sessionFunction';
+import { fetchYoungInfor } from '@/pages/api/redux/youngDataSlide';
+import { appDispatch, rootState } from '@/pages/api/redux/store';
 
 
 
-export default function navbar({ setLink, style }) {
+export default function navbar({ setLink, style, color }) {
 
-    const dispath = useDispatch();
+    const dispatch = useDispatch<appDispatch>();
 
 
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState({ role: null, username: null });
+    const { infor } = useSelector((state: rootState) => state.youngData)
 
 
     useEffect(() => {
         if (getItemSession() !== 'undefined') {
             const user = JSON.parse(getItemSession());
             setUser(user)
+            dispatch(fetchYoungInfor({ user_token: JSON.parse(getItemSession()).username }));
+            // console.log(infor)
         }
     }, [])
 
@@ -48,13 +53,13 @@ export default function navbar({ setLink, style }) {
             >
                 <span className="navbar-toggler-icon"></span>
             </button>
-            <div className="navbar-collapse collapse " id="navbarCollapse" >
+            <div className="navbar-collapse collapse " id="navbarCollapse">
                 <ul className="navbar-nav ms-auto me-auto">
                     <li className="nav-item active">
-                        <a className="nav-link" onClick={() => setLink('home')}>Trang chủ</a>
+                        <a className={`nav-link ${color} fw-bold`} onClick={() => setLink('home')}>Trang chủ</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" onClick={() => setLink('active')}>Hoạt động</a>
+                        <a className={`nav-link ${color} fw-bold`} onClick={() => setLink('active')}>Hoạt động</a>
                     </li>
                     {/* <li className="nav-item">
                         <a className="nav-link" onClick={() => setLink('young')}>Yourng</a>
@@ -64,7 +69,7 @@ export default function navbar({ setLink, style }) {
                 <div className="mr-auto justify-content-between" style={{ paddingRight: 10 }}>
 
                     <div className="dropdown">
-                        <span className='text-white' style={{ fontSize: 18, fontFamily: 'cursive' }}>{user !== null ? `${user.username}` : 'Anonymous'}</span>
+                        <span className={`${color !== '' ? color : 'text-light'}`} style={{ fontSize: 18, fontFamily: 'cursive', marginRight: 5 }}>{user?.role ? `${infor.infor?.name ? infor.infor?.name : 'No name'}` : 'Anonymous'}</span>
                         <button
                             className="btn bg-dark dropdown-toggle"
                             style={{ color: 'white' }}
@@ -77,10 +82,10 @@ export default function navbar({ setLink, style }) {
                         >
                         </button>
 
-                        <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown" id="userLogin">
+                        <ul className="dropdown-menu dropdown-menu-end px-2" aria-labelledby="userDropdown" id="userLogin">
                             {/* <li onClick={() => route.push('/views/yourngPages/authen', '/authen')}> */}
                             {/* <li onClick={() => dispath(openClose_Login(true))}> */}
-                            {user === null ?
+                            {user.role === null ?
                                 (
                                     <li onClick={() => route.replace('/views/modals/loggin_registerModal', "/authen")}>
                                         Đăng nhập

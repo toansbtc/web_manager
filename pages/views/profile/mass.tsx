@@ -6,6 +6,8 @@ import actionDB from '@/pages/api/DB/actionDB';
 import { fetchYoungMember, updateMember } from '@/pages/api/redux/youngDataSlide';
 import { set } from 'firebase/database';
 import sendMessageToUser from '../Function/sendMessageFB';
+import { info } from 'console';
+import sendMessageToNumberPhone from '../../api/controller/sendMessageToNumberPhone';
 
 export default function mass() {
 
@@ -17,13 +19,34 @@ export default function mass() {
     const [text1, setText1] = useState("");
     const [text2, setText2] = useState("");
 
-    useEffect(() => { setMemberMass(member) }, [member])
+    const [MemberRead, setMemberRead] = useState<{ id: String, name: String, read: boolean }[]>([])
+    const [MemberNotRead, setMemberNotRead] = useState<{ id: String, name: String, read: boolean }[]>([])
+
+    useEffect(() => {
+        setMemberMass(() => {
+            return member.filter(value => value.user_token.toLowerCase() !== 'admin')
+        })
+        const arrayMemberCanRead = []
+        const arrayMemberNotRead = []
+        member.map(value => {
+            if (value?.infor?.canRead === true) {
+                arrayMemberCanRead.push({ id: value?.user_token, name: value?.infor.name, read: value.infor.reading })
+            }
+            else {
+                arrayMemberNotRead.push({ id: value?.user_token, name: value?.infor.name, read: value.infor.reading })
+            }
+        })
+        setMemberRead(arrayMemberCanRead)
+        setMemberNotRead(arrayMemberNotRead)
+    }, [member])
+
+
 
 
     async function handleSendMessage() {
         if (text1 !== "" && text2 !== "") {
 
-            let data_coppy_member = [...memberMass]
+            let data_coppy_member = [...MemberRead]
             const getUniqueRandomMember = new Set()
             // const indexRandomMember: string[] = []
 
@@ -33,7 +56,7 @@ export default function mass() {
                 // indexRandomMember.push(randomIndex.toString())
             }
             const arraySet = Array.from(getUniqueRandomMember) as any[]
-            const accept = confirm(`1,${arraySet[0]?.infor?.name} \n2,${arraySet[1]?.infor?.name}\nLNTH,${arraySet[2]?.infor?.name}`)
+            const accept = confirm(`1,${arraySet[0]?.name} \n2,${arraySet[1]?.name}\nLNTH,${arraySet[2]?.name}`)
             // indexRandomMember.forEach(value => {
             //     data_coppy_member[parseInt(value)].infor.reading = true
             // })
@@ -51,12 +74,14 @@ export default function mass() {
                             }
                         })
                     const acess_token = accessToken.data[0].page_access_token;
-                    const read1 = await sendMessageToUser(arraySet[0]?.user_token, `1:\n ${text1}`, acess_token)
-                    const read2 = await sendMessageToUser(arraySet[1]?.user_token, `2:\n ${text2}`, acess_token)
-                    const read3 = await sendMessageToUser(arraySet[2]?.user_token, `LNTH`, acess_token)
+                    // const read1 = await sendMessageToUser(arraySet[0]?.user_token, `1:\n ${text1}`, acess_token)
+                    // const read2 = await sendMessageToUser(arraySet[1]?.user_token, `2:\n ${text2}`, acess_token)
+                    // const read3 = await sendMessageToUser(arraySet[2]?.user_token, `LNTH`, acess_token)
+                    const read3 = await sendMessageToUser('122151162194399846', `LNTH`, acess_token)
                     // dispatch(fetchYoungMember)
                     let result = null
-                    if (read1.status === 200 && read2.status === 200 && read3.status === 200) {
+                    // if (read1.status === 200 && read2.status === 200 && read3.status === 200) {
+                    if (read3?.status === 200) {
                         result = await axios.post('/api/DB/CRUDinfor', {
                             "action": actionDB.UPDATEMANY,
                             "data": arraySet
@@ -71,8 +96,6 @@ export default function mass() {
                     alert("không thể gửi tin nhắn")
                     console.error(error)
                 }
-
-
             }
         }
         else
@@ -82,7 +105,7 @@ export default function mass() {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        const unReadingMember = memberMass.filter(value => value?.infor?.reading === false && value?.role !== 0)
+        const unReadingMember = MemberRead.filter(value => value?.read === false && value?.id !== 'admin')
         if (unReadingMember.length >= 3) {
             handleSendMessage()
         }
@@ -100,10 +123,82 @@ export default function mass() {
         }
     }
 
+    const changeMemberReading = (action: 'add' | 'delete', object) => {
+        switch (action) {
+            case 'add':
+                setMemberRead((pre) => {
+                    const array = [...pre]
+                    array.push(object)
+                    return array
+                })
+                setMemberNotRead((value) => {
+                    const array = [...value]
+                    return array.filter(member => member.id !== object.id)
+                })
+                break;
+            case 'delete':
+                setMemberNotRead((pre) => {
+                    const array = [...pre]
+                    array.push(object)
+                    return array
+                })
+                setMemberRead((value) => {
+                    const array = [...value]
+                    return array.filter(member => member.id !== object.id)
+                })
+                break;
+                break;
+            default:
+                break;
+        }
+
+    }
+
     return (
-        <div className="container d-flex flex-column align-items-center justify-content-center h-100">
-            <div className="card shadow-none p-4" style={{ width: "100%" }}>
-                <h4 className="text-center text-primary mb-3">Phụng vụ TL</h4>
+        <div className="container ">
+
+
+
+
+
+            <div className="row ">
+
+                {/* Left Section */}
+                <div className="p-3 border-4 rounded-4 shadow-lg col-lg-6 col-md-6 col-sm-12">
+                    <h4 className="text-primary text-center fw-bold">left </h4>
+                    <div style={{ maxHeight: 500 }} className=" overflow-y-scroll">
+                        {MemberRead.map(item => (
+                            <div className="d-flex justify-content-between align-items-center border-bottom p-2">
+                                <span className="fw-bold ">{item.name}</span>
+                                <label htmlFor="">{item.read ? "read" : "not yet"}</label>
+                                <i onClick={() => changeMemberReading("delete", item)}>-</i>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                {/* Right Section */}
+                <div className=" p-3 border-5 rounded-4 shadow-sm col-lg-6 col-md-6 col-sm-12">
+                    <h4 className="text-success text-center fw-bold">right</h4>
+                    <div style={{ maxHeight: 500 }} className=" overflow-y-scroll">
+                        {MemberNotRead.map(item => (
+                            <div className="d-flex justify-content-between align-items-center border-bottom p-2">
+                                <span className="fw-bold">{item.name}</span>
+                                <i onClick={() => changeMemberReading("add", item)}>+</i>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className='d-flex justify-content-end align-content-center mt-3'>
+                    <button className='bg-danger-subtle border-0' onClick={() => axios.post('/api/controller/sendMessageToNumberPhone', { "recivedNumberPhone": '+84327580849', "message": "xin chào" })}>Lưu thay đổi</button>
+                </div>
+
+            </div>
+
+
+
+
+            <div className="border-5  shadow-lg p-3 mt-4" style={{ width: "100%" }}>
+                <h4 className="text-center text-primary mb-3">TL</h4>
 
                 {/* Textarea */}
                 <form onSubmit={handleSubmit}>

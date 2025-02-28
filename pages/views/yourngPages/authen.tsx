@@ -244,7 +244,7 @@ export default function Home() {
                                             required
                                             onChange={(e) => {
                                                 console.log(e.target.value)
-                                                console.log(password)
+                                                // console.log(password)
                                                 if (e.target.value === password)
                                                     setCheckPassword(false)
                                                 else

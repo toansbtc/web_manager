@@ -14,7 +14,7 @@ export async function createDriveImage(imageFile, folder) {
         formDataImage.append("action", action.CREATE);
         await axios.post("/api/controller/gg_drive", formDataImage).then((result) => {
             if (result.data) {
-                console.log("data result ", result.data);
+                // console.log("data result ", result.data);
                 fileID = result.data.fileId;
             }
         })

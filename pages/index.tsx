@@ -50,7 +50,7 @@ export default function index() {
     else {
       setIsLoading(false)
       setImageIntroduct(dataImagePath)
-      console.log('dataImagePath', dataDescription, dataFatherIntro, dataImagePath)
+      // console.log('dataImagePath', dataDescription, dataFatherIntro, dataImagePath)
     }
 
   }, [dataImagePath])
@@ -104,7 +104,7 @@ export default function index() {
       const data = imageIntroduct?.introduct.split('\n')
       setOnChangeImagePath(imageIntroduct?.introduct)
       setImageList(data)
-      console.log("image list path", imageList)
+      // console.log("image list path", imageList)
     }
   }, [imageIntroduct])
 
@@ -251,7 +251,7 @@ export default function index() {
 
           </div>
 
-          <Navbar setLink={setLinkFromNavbar} style={!isScrolled ? "bg-transparent" : "bg-black"} />
+          <Navbar setLink={setLinkFromNavbar} style={!isScrolled ? "bg-transparent" : "bg-black"} color={!isScrolled ? "text-danger" : ""} />
 
           <div className={`home-container ${isScrolled ? 'visible' : ''}`}>
             <Home />
@@ -273,7 +273,7 @@ export default function index() {
         >
           {/* Navbar (Fixed Height) */}
           <div style={{ height: "60px", width: "100%", backgroundColor: "black" }}>
-            <Navbar setLink={setLinkFromNavbar} style={"bg-black"} />
+            <Navbar setLink={setLinkFromNavbar} style={"bg-black"} color={""} />
           </div>
 
           {/* Content (Expands & Doesn't Get Hidden) */}

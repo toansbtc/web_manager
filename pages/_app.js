@@ -8,11 +8,13 @@ import LoadingProvider from "./views/loadingPages/loadingContext"
 import LoadingScreen from "./views/loadingPages/loadingScreen"
 import FetchDataPage from "./api/redux/fetchDataPage"
 import Loggin_registerModal from "./views/modals/loggin_registerModal"
+import FbSDK from './views/Function/fbSDK'
 
 
 export default function App({ Component, pageProps }) {
   return (
     <Provider store={store}>
+      <FbSDK />
       <FetchDataPage>
         <LoadingProvider>
           <LoadingScreen />

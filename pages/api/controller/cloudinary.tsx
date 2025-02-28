@@ -38,7 +38,7 @@ export default async function cloudinary(req: NextApiRequest, res: NextApiRespon
     }
     else {
 
-      console.log("files")
+      // console.log("files")
 
       if (!files.file) {
         return res.status(400).json({ error: "No files uploaded" });
@@ -49,7 +49,7 @@ export default async function cloudinary(req: NextApiRequest, res: NextApiRespon
       let uploadedUrls = "";
 
       for (const file of fileList) {
-        console.log(`Uploading: ${file.originalFilename}`);
+        // console.log(`Uploading: ${file.originalFilename}`);
 
         const result = await cloudinary_config.uploader.upload(file.filepath, {
           folder: "uploads",
@@ -57,7 +57,7 @@ export default async function cloudinary(req: NextApiRequest, res: NextApiRespon
 
         uploadedUrls += result.secure_url + ",";
       }
-      console.log(uploadedUrls)
+      // console.log(uploadedUrls)
 
       return res.status(200).json({ urls: uploadedUrls.substring(0, uploadedUrls.length - 1) });
     }

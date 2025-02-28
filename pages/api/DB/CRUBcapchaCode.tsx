@@ -34,7 +34,7 @@ export default async function prisma_sql(req: NextApiRequest, res: NextApiRespon
                     }
 
                 });
-                console.log("capcha create", result)
+                // console.log("capcha create", result)
                 break;
 
             default:

@@ -74,10 +74,10 @@ export default function addFatherModal({ controlModal, loadList, fatherIntro }) 
       if (imageFile) {
 
         await createDriveImage(imageFile, "Father").then((fileID) => {
-          console.log("fileID", fileID)
+          // console.log("fileID", fileID)
           data = { ...data, image_path: fileID }
         })
-        console.log("data update", data)
+        // console.log("data update", data)
       }
 
 
@@ -99,7 +99,7 @@ export default function addFatherModal({ controlModal, loadList, fatherIntro }) 
 
         await axios.post("/api/DB/CRUDfatherInfor", { "action": action.UPDATE, "data": fatherIntro }).then((result) => {
           if (result.status === 200) {
-            console.log("result.data", result.data)
+            // console.log("result.data", result.data)
             dispath(handleHomeFatherIntro_Update(fatherIntro))
             alert('Chỉnh sửa thành công!');
             controlModal(false)

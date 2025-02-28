@@ -36,6 +36,7 @@ export default function ProfilePage() {
 
 
     useEffect(() => {
+        console.log(getItemSession())
         if (getItemSession() !== 'undefined') {
             setUser(JSON.parse(getItemSession()))
             const user = JSON.parse(getItemSession()).username

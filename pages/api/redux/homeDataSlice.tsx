@@ -22,7 +22,7 @@ export const fetchHomeData = createAsyncThunk("home/fetchHomeData",
       request.push({})
 
     const result = await Promise.all(request);
-    console.log("request", result)
+    // console.log("request", result)
     const [dataDescription, dataFatherIntro, dataImage] = result.map((res) => res.data)
 
     return { dataDescription, dataFatherIntro, dataImage };
@@ -79,7 +79,7 @@ const homeRedux = createSlice({
         const possition = state.dataFatherIntro.findIndex((item) => item.id === action.payload.id)
         if (possition != -1)
           state.dataFatherIntro[possition] = { ...state.dataFatherIntro[possition], ...data }
-        console.log(state.dataFatherIntro)
+        // console.log(state.dataFatherIntro)
       } catch (error) {
         console.log("redux update father infor", error)
       }

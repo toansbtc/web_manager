@@ -14,7 +14,7 @@ const fireBase_Store = createSlice({
             state.user = action.payload.user;
             state.providerId = action.payload.providerId;
             state.operationType = action.payload.operationType;
-            console.log('payload user ', state.operationType)
+            // console.log('payload user ', state.operationType)
         },
         logout: (state, action: PayloadAction<UserCredential>) => {
             state.user = null;

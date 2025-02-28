@@ -59,7 +59,6 @@ export default function update() {
             ...prev,
             [name]: value,
         }));
-
     };
 
     const handleImageChange = (e) => {
@@ -100,7 +99,7 @@ export default function update() {
                 if (imageFile) {
 
                     await createDriveImage(imageFile, "Father").then((fileID) => {
-                        console.log("fileID", fileID)
+                        // console.log("fileID", fileID)
                         data = { ...data, image_path: fileID }
                     })
                     console.log("data update", data)

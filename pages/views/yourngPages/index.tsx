@@ -19,8 +19,8 @@ export default function index() {
         axios.post("/api/DB/CRUDintroHome", { "action": action.GETDATA, "data": { "type": "young" } })
             .then((result => {
                 if (result.status === 200)
-                    console.log("young introduct", result.data)
-                setDescription(result.data ? result.data : { "introduct": '' })
+                    // console.log("young introduct", result.data)
+                    setDescription(result.data ? result.data : { "introduct": '' })
             }))
     }, [])
 

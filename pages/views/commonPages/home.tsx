@@ -92,8 +92,8 @@ export default function home() {
             await axios.post('/api/DB/CRUDintroHome', { "action": actionDB.GETDATA, "data": { "type": "introduct" } })
                 .then((result) => {
                     if (result.status === 200)
-                        console.log("introduct", result.data.introduct)
-                    setDescription(result.data ? result.data : { "introduct": '' })
+                        // console.log("introduct", result.data.introduct)
+                        setDescription(result.data ? result.data : { "introduct": '' })
                 })
 
         } catch (error) {

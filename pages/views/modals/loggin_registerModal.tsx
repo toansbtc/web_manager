@@ -3,8 +3,8 @@ import { Inter } from "next/font/google";
 import { useState, useEffect, use } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { onAuthStateChanged, signInWithPopup, deleteUser, FacebookAuthProvider } from "firebase/auth";
-import { auth, faceBookProvider, googleprovider, user } from "../../api/config/fireBase"
+import { onAuthStateChanged, signInWithPopup, deleteUser, FacebookAuthProvider, signInWithPhoneNumber, RecaptchaVerifier } from "firebase/auth";
+import { auth, faceBookProvider, googleprovider, user, } from "../../api/config/fireBase"
 import { useDispatch, useSelector } from "react-redux";
 
 import { browserLocalPersistence, setPersistence } from 'firebase/auth';
@@ -34,6 +34,13 @@ export default function loggin_registerModal() {
   const [rememberMe, setRememberMe] = useState(false);
   const [loginOrRegister, setLoginOrRegister] = useState('login');
   const [capchaCode, setCapchaCode] = useState('');
+  const [numberPhone, setNumberPhone] = useState(null);
+  const [ShowOTP, setShowOTP] = useState(false);
+  const [confirmResult, setconfirmResult] = useState(null);
+  const [confirmOTP, setconfirmOTP] = useState(null);
+  const [recaptchaVerifier, setRecaptchaVerifier] = useState<RecaptchaVerifier | null>(null);
+
+
   // const [loading, setIsLoading] = useState(false);
   // const [adminUser, setAdminUser] = useState('');
   // const [password, setPassword] = useState('');
@@ -52,8 +59,6 @@ export default function loggin_registerModal() {
 
 
   useEffect(() => {
-
-
     if (getItemSession() !== 'undefined')
       router.replace('/')
     // const unsubscriple = onAuthStateChanged(auth, (currentUser) => {
@@ -66,6 +71,25 @@ export default function loggin_registerModal() {
 
     // return () => unsubscriple();
   }, [router])
+
+  // useEffect(() => {
+  //   if (!recaptchaVerifier) {
+  //     const verifier = new RecaptchaVerifier(
+  //       auth,
+  //       "recaptcha-container",
+  //       {
+  //         size: "invisible",
+  //         callback: (response: any) => {
+  //           console.log("reCAPTCHA verified:", response);
+  //         },
+  //         "expired-callback": () => {
+  //           console.error("reCAPTCHA expired");
+  //         }
+  //       }
+  //     );
+  //     setRecaptchaVerifier(verifier);
+  //   }
+  // }, [auth, recaptchaVerifier]);
 
 
 
@@ -103,30 +127,59 @@ export default function loggin_registerModal() {
 
     try {
       setIsLoading(true)
-      faceBookProvider.addScope("email")
-      faceBookProvider.addScope("pages_messaging")
-      const result = await signInWithPopup(auth, faceBookProvider)
-      const user = result.user
+      // faceBookProvider.addScope("email")
+      // faceBookProvider.addScope("pages_messaging")
+      // faceBookProvider.addScope("public_profile");
+      // const result = await signInWithPopup(auth, faceBookProvider)
+      // const user = result.user
 
-      const fbUserID = user.providerData.find((data) => data.providerId === "facebook.com").uid
+      // const fbUserID = user.providerData.find((data) => data.providerId === "facebook.com").uid
+      // console.log(user)
 
-      await axios.post('/api/DB/CRUDaccountRole', { "action": actionDB.GETDATA, "data": { "user_token": fbUserID } })
-        .then((data) => {
-          console.log(data)
-        })
+      // await axios.post('/api/DB/CRUDaccountRole', { "action": actionDB.GETDATA, "data": { "user_token": fbUserID } })
+      //   .then((data) => {
+      //     // console.log(data)
+      //   })
 
       // const credential=FacebookAuthProvider.credentialFromResult(result);
       // const access_token=credential.accessToken;
 
 
-
       // check user had regiter befor login
-      if (user.metadata.creationTime === user.metadata.lastSignInTime) {
-        user.delete();
-      }
-      else {
-        setItemSession(key_user, result.user)
-      }
+
+      window.FB.login(
+        function (res: any) {
+          if (res.authResponse) {
+            console.log(res)
+            const fbUserID = res.authResponse.userID
+            axios.post('/api/DB/CRUDaccountRole', { "action": actionDB.GETDATA, "data": { "user_token": fbUserID } })
+              .then((data) => {
+                if (data.data.user_token) {
+                  console.log(data.data)
+                  setItemSession(key_user, { "username": data.data.user_token, "role": data.data.role })
+                  router.push("/")
+                }
+                else {
+                  alert("Tài khoản của bạn không trong Giới Trẻ")
+                }
+              })
+          }
+        }
+      )
+
+      // if (user.metadata.creationTime === user.metadata.lastSignInTime) {
+      //   user.delete();
+      //   alert("Bạn phải đăng ký tài khoản bằng FB trước khi đăng nhập!!!")
+      // }
+      // else {
+      // const fbUserID = user.providerData.find((data) => data.providerId === "facebook.com").uid
+      // await axios.post('/api/DB/CRUDaccountRole', { "action": actionDB.GETDATA, "data": { "user_token": fbUserID } })
+      //   .then((data) => {
+      //     console.log(data.data)
+      //     setItemSession(key_user, { "username": data.data.user_token, "role": data.data.role })
+      //     router.push("/")
+      //   })
+      // }
 
     } catch (error) {
       returnError(error.code)
@@ -136,37 +189,151 @@ export default function loggin_registerModal() {
       setIsLoading(false)
     }
   }
-  const fb_Register = () => {
-    try {
-      setIsLoading(true)
-      axios.post('/api/DB/CRUBcapchaCode', { "action": actionDB.GETDATA }).then(async (data) => {
-        console.log(data.data)
-        if (data.data.capcha_code === capchaCode) {
+  const fb_Register = async () => {
+    if (typeof window !== "undefined" && window.FB)
+      try {
+        setIsLoading(true)
+        axios.post('/api/DB/CRUBcapchaCode', { "action": actionDB.GETDATA })
+          .then(async (data) => {
+            // console.log(data.data)
+            if (data.data.capcha_code === capchaCode) {
+              window.FB.login(
+                function (res: any) {
+                  if (res.authResponse) {
+                    console.log(res)
+                    const fbUserID = res.authResponse.userID
+                    if (fbUserID) {
+                      axios.post('/api/DB/CRUDaccountRole', { "action": actionDB.GETDATA, "data": { "user_token": fbUserID } })
+                        .then(async (data) => {
+                          if (data.data?.user_token !== null) {
+                            setItemSession(key_user, { "username": data.data.user_token, "role": data.data.role })
+                            router.push("/")
 
-          try {
-            const result = await signInWithPopup(auth, faceBookProvider)
-            setItemSession(key_user, result.user)
-          } catch (error) {
-            console.log(error.code)
-            returnError(error.code)
+                          }
+                          else {
+                            const save_user_regist_fb = await axios.post('/api/DB/CRUDaccountRole', {
+                              "action": actionDB.CREATE,
+                              "data": { "user_token": fbUserID, "role": 3, "is_active": true }
+                            })
+                            // console.log(sigin_fb.user)
+                            if (save_user_regist_fb.status === 200) {
+                              setItemSession(key_user, { "username": save_user_regist_fb.data.user_token, "role": save_user_regist_fb.data.role })
+                              router.push("/")
+                            }
+                          }
+                        }
+                        )
+                    }
+                  }
+                }
+              )
+            }
+
+            //   const sigin_fb = await signInWithPopup(auth, faceBookProvider)
+            //   const user = sigin_fb.user
+
+            //   const fbUserID = user.providerData.find((data) => data.providerId === "facebook.com").uid
+            //   if (fbUserID) {
+            //     await axios.post('/api/DB/CRUDaccountRole', { "action": actionDB.GETDATA, "data": { "user_token": fbUserID } })
+            //       .then(async (data) => {
+            //         if (data.data?.user_token !== null) {
+            //           setItemSession(key_user, { "username": data.data.user_token, "role": data.data.role })
+            //           router.push("/")
+
+            //         }
+            //         else {
+            //           const save_user_regist_fb = await axios.post('/api/DB/CRUDaccountRole', {
+            //             "action": actionDB.CREATE,
+            //             "data": { "user_token": fbUserID, "role": 3, "is_active": true }
+            //           })
+            //           console.log(sigin_fb.user)
+            //           if (save_user_regist_fb.status === 200) {
+            //             setItemSession(key_user, { "username": save_user_regist_fb.data.user_token, "role": save_user_regist_fb.data.role })
+            //             router.push("/")
+            //           }
+            //         }
+            //       }
+            //       )
+            //   }
+            // }
+            else {
+              alert("capcha code dont exist or used!\n please contact with admin to get valid capcha code ")
+            }
           }
+          )
+      }
+      catch (e) {
+        console.error(e)
+      }
+      finally {
+        setIsLoading(false)
+      }
+    else
+      alert("Bạn không chạy trên windows")
 
-        }
-        else {
-          alert("capcha code dont exist or used!\n please contact with admin to get valid capcha code ")
-        }
-      })
-      setCapchaCode("");
 
-    } catch (error) {
-      console.log(error.code)
-    }
-    finally {
-      setIsLoading(false)
-    }
   }
 
 
+
+
+
+
+
+
+  // const handleSigninPhoneNumber = async (e) => {
+  //   // const form = new FormData(e.currentTarget)
+  //   // const numberPhone = form.get("numberPhone") as string;
+  //   if (!numberPhone) {
+  //     alert("Please enter a phone number");
+  //     return;
+  //   }
+
+  //   if (!recaptchaVerifier) {
+  //     console.error("reCAPTCHA is not ready yet.");
+  //     return;
+  //   }
+  //   try {
+  //     setIsLoading(true)
+
+
+  //     axios.post('/api/DB/CRUBcapchaCode', { "action": actionDB.GETDATA })
+  //       .then(async (data) => {
+  //         // console.log(data.data)
+  //         if (data.data.capcha_code === capchaCode) {
+  //           signInWithPhoneNumber(auth, numberPhone, recaptchaVerifier)
+  //             .then((confirmCode) => {
+  //               confirmCode.verificationId
+  //               setconfirmResult(confirmCode)
+  //               alert("Hệ thống đã gửi mã xác thực OTP về số điện thoại:" + numberPhone);
+  //               setShowOTP(true);
+  //             })
+  //         }
+  //         else
+  //           alert("Mã captcha của bạn không đúng!!\n vui lòng liên hệ Admin để lấy mã")
+  //       })
+  //   }
+  //   catch (e) {
+  //     console.log(e)
+  //   }
+  //   finally {
+  //     setIsLoading(false)
+  //   }
+  // }
+
+  // function verifyOTP() {
+  //   if (confirmResult !== null && confirmOTP !== null) {
+  //     confirmResult.confirm(confirmOTP)
+  //       .then((result) => {
+  //         console.log("User signed in:", result.user);
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error verifying OTP:", error);
+  //       });
+  //   }
+  //   else
+  //     alert("can't get confirmResult")
+  // }
 
   return (
     <>
@@ -227,11 +394,11 @@ export default function loggin_registerModal() {
                     />
                   </div>
                   <button type="submit" className="form-control btn btn-info">
-                    Login
+                    Đăng nhập
                   </button>
                 </form>
                 <div className="row mt-2 text-center">
-                  <div className="w-50">
+                  {/* <div className="w-50">
                     <label >
                       <input type="checkbox" id="chk_remember" style={{ marginRight: '8px' }}
                         checked={rememberMe}
@@ -245,9 +412,9 @@ export default function loggin_registerModal() {
 
                     <a href="#"  >Forgot Password?</a>
 
-                  </div>
-                  <div className="w-100 text-center m-2">
-                    <label >-- Login with --</label>
+                  </div> */}
+                  <div className="w-100 text-center m-2" style={{ fontWeight: 'bold', color: 'MenuText' }}>
+                    <label >-- Thành viên giới trẻ đăng nhập với FB --</label>
                     <div className="d-flex justify-content-center mt-1">
                       <i style={{ color: "blue", fontSize: 35 }} className=" fa-brands fa-facebook" aria-hidden="true"
                         onClick={fb_Login}></i>
@@ -259,14 +426,36 @@ export default function loggin_registerModal() {
             )}
             {loginOrRegister === 'register' && (
               <div className="text-center">
-                <div className="d-flex justify-content-center align-content-center mt-1">
-                  <i style={{ color: "blue", fontSize: 35 }} className=" fa-brands fa-facebook" aria-hidden="true"
-                    onClick={fb_Register}></i>
+                <div className="mt-1">
+                  <input type="text" className="w-50" placeholder="Captcha code" value={capchaCode} required onChange={(e) => setCapchaCode(e.target.value)} />
                 </div>
-                <div>
-                  <input type="text" placeholder="capcha code" value={capchaCode} required onChange={(e) => setCapchaCode(e.target.value)} style={{ width: "200px" }} />
+                <div className="d-flex justify-content-center  align-content-center mt-2 w-100 " onClick={fb_Register}>
+                  <span className="bg-light p-1" style={{ fontWeight: 'bold' }}>Đăng ký <i className=" fa-brands fa-facebook" style={{ color: 'blue' }} aria-hidden="true" /></span>
                 </div>
               </div>
+              // <div className="container mt-4 d-flex justify-content-center align-items-center" style={{ background: "linear-gradient(to right, #8360c3, #2ebf91)" }}>
+              // <div className="card p-4 shadow-lg " style={{ backgroundColor: 'transparent', width: "100%", height: '90%', borderRadius: "15px", background: 'linear-gradient(to right, rgb(153 184 223 / 64%), rgb(169 169 150))' }}>
+              //   {ShowOTP === false ? <div >
+              //     <div className="mb-3">
+              //       <label htmlFor="input1" className="form-label">Số điện thoại:</label>
+              //       <input type="text" id="input1" onChange={(e) => setNumberPhone(e.target.value)} name="numberPhone" className="form-control" required />
+              //     </div>
+              //     <div className="mb-3">
+              //       <label htmlFor="input2" className="form-label">Admin Captcha Code:</label>
+              //       <input type="text" id="input2" name="captcha" onChange={(e) => setCapchaCode(e.target.value)} className="form-control" required />
+              //     </div>
+              //     <button onClick={handleSigninPhoneNumber} className="btn btn-primary w-100">Đăng ký</button>
+              //   </div> :
+              //     <div>
+              //       <div className="mb-3">
+              //         <label htmlFor="input2" className="form-label">OTP:</label>
+              //         <input type="text" id="input2" name="captcha" onChange={(e) => setconfirmOTP(e.target.value)} className="form-control" required />
+              //       </div>
+              //       <button className="btn btn-primary w-100" onClick={verifyOTP}>Xác thực OTP</button>
+              //     </div>
+              //   }
+              // </div>
+              // </div>
             )}
           </div>
         </div>

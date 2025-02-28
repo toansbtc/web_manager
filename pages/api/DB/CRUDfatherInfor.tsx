@@ -69,7 +69,7 @@ export default async function prisma_sql(req: NextApiRequest, res: NextApiRespon
                 })
                 break;
             case ActionDB.UPDATE:
-                console.log("data", formData)
+                // console.log("data", formData)
                 result = await prisma.farther_intro.update(
                     {
                         where: {

@@ -28,7 +28,7 @@ export default function member() {
 
     useEffect(() => {
         setUpdateMember(member)
-        console.log(member)
+        // console.log(member)
     }, [member])
 
     useEffect(() => {
@@ -55,7 +55,7 @@ export default function member() {
             const index = newMember.findIndex((value) => value.user_token === user_token)
             if (index !== -1)
                 newMember[index] = { ...newMember[index], is_active: action };
-            console.log(newMember)
+            // console.log(newMember)
             return newMember
         })
 
@@ -79,7 +79,7 @@ export default function member() {
                 value.infor?.birth_day, value.infor?.number_phone, value.infor?.job, value.infor?.address])
             })
             const workbook = XLSX.utils.book_new();
-            console.log(array_excell_member)
+            // console.log(array_excell_member)
             const workSheet = XLSX.utils.aoa_to_sheet(array_excell_member)
             XLSX.utils.book_append_sheet(workbook, workSheet, 'Thông tin')
             const workbookBlob = new Blob([XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -104,7 +104,7 @@ export default function member() {
             setUpdateMember((preMember) => {
                 const newMember = [...preMember];
                 const data = newMember.filter((value) => value.infor?.name.toLowerCase().includes(searchData.toLowerCase()))
-                console.log(newMember, searchData, data)
+                // console.log(newMember, searchData, data)
                 if (data.length > 0)
                     return data
                 else
@@ -130,7 +130,7 @@ export default function member() {
                 setUpdateMember(member)
                 return;
             }
-            console.log("account leader", updateMember.filter((value) => value.role === 1 && value.is_active === false))
+            // console.log("account leader", updateMember.filter((value) => value.role === 1 && value.is_active === false))
             if (checkLeaderGroup.length === 1 && updateMember.filter((value) => value.role === 1 && value.is_active === false).length === 1) {
                 alert("Bạn đang khóa tài khoản trưởng nhóm!!!!")
                 setUpdateMember(member)
@@ -156,7 +156,7 @@ export default function member() {
             if (array_data_role.length > 0) {
                 const result = await axios.post("/api/DB/CRUDaccountRole", { "action": actionDB.UPDATEMANY, "data": array_data_role })
                 if (result.status === 200 && result.data) {
-                    console.log(result.data)
+                    // console.log(result.data)
 
                     setUpdateMember((pre) => {
                         const newMember = [...pre];
@@ -239,7 +239,7 @@ export default function member() {
                         <div className={`card shadow-sm h-100 ${member.is_active === true ? "bg-danger-subtle" : "bg-gradient-subtle"}`}>
 
 
-                            <div className=" form-switch position-absolute top-0 end-0 p-0" >
+                            {(infor?.role === 0 || infor?.role === 1 || infor?.role === 2) && <div className=" form-switch position-absolute top-0 end-0 p-0" >
                                 <input
                                     className="form-check-input col-md-2"
                                     type="checkbox"
@@ -251,7 +251,7 @@ export default function member() {
                                 {/* <label className="form-check-label col-md-6" htmlFor="flexSwitchCheck">
                                         {!member.active ? "Hoạt động" : "Đã khóa"}
                                     </label> */}
-                            </div>
+                            </div>}
 
 
 
