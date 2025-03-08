@@ -213,7 +213,7 @@ export default function mass() {
 
                 {/* Left Section */}
                 <div className="p-3 border-4 rounded-4 shadow-lg col-lg-6 col-md-6 col-sm-12">
-                    <h4 className="text-primary text-center fw-bold">left </h4>
+                    <h4 className="text-primary text-center fw-bold">Có thể đọc</h4>
                     <div style={{ maxHeight: 500 }} className=" overflow-y-scroll">
                         {MemberRead.map((item, key) => (
                             <div key={key} className="d-flex justify-content-between align-items-center border-bottom ">
@@ -235,7 +235,7 @@ export default function mass() {
                 </div>
                 {/* Right Section */}
                 <div className=" p-3 border-5 rounded-4 shadow-sm col-lg-6 col-md-6 col-sm-12">
-                    <h4 className="text-success text-center fw-bold">right</h4>
+                    <h4 className="text-success text-center fw-bold">Đang suy nghĩ</h4>
                     <div style={{ maxHeight: 500 }} className=" overflow-y-scroll">
                         {MemberNotRead.map((item, key) => (
                             <div key={key} className="d-flex justify-content-between align-items-center border-bottom p-2">

@@ -173,7 +173,7 @@ export default function index() {
   return (
     <>
       <Head>
-        <meta name="google-site-verification" content="y42mwo2BzvI5rYuVzjqz-gL_u1LBdKA7yHYma-_8I6Y" />
+        <meta name="google-site-verification" content="u009eL24RVZacsIboVVI3he3y0z0Z9hYllcnAXzkEIs" />
         <meta name="keywords" content="church, gxap, GXAP, Giáo Xứ AN PHÚ, giáo phận phú cường, phú cường,bình dương, nhà thờ an phú, giới trẻ an phú, giới trẻ phú cường, catholic church" />
         <meta name="robots" content="index, follow" />
         <title>Giáo xứ an phú</title>
