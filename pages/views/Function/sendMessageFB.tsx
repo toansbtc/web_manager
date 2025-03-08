@@ -8,6 +8,7 @@ export default function sendMessageToUser(userID, messageText, pageAccessToken) 
             const response = apiSendMessage(url, userID, messageText)
             return response
         }
+        else return null
     } catch (error) {
         console.error(error)
     }
