@@ -173,6 +173,7 @@ export default function index() {
   return (
     <>
       <Head>
+        <meta name="google-site-verification" content="y42mwo2BzvI5rYuVzjqz-gL_u1LBdKA7yHYma-_8I6Y" />
         <title>GX AN PHU</title>
         <meta name="description" content="Trang thông tin và giới thiệu chung về giáo xứ An Phú giáo phận Phú Cường" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
