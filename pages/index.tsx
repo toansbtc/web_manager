@@ -174,12 +174,16 @@ export default function index() {
     <>
       <Head>
         <meta name="google-site-verification" content="y42mwo2BzvI5rYuVzjqz-gL_u1LBdKA7yHYma-_8I6Y" />
-        <title>GX AN PHU</title>
-        <meta name="description" content="Trang thông tin và giới thiệu chung về giáo xứ An Phú giáo phận Phú Cường" />
+        <meta name="keywords" content="church, gxap, GXAP, Giáo Xứ AN PHÚ, giáo phận phú cường, phú cường,bình dương, nhà thờ an phú, giới trẻ an phú, giới trẻ phú cường, catholic church" />
+        <meta name="robots" content="index, follow" />
+        <title>Giáo xứ an phú</title>
+        <meta name="description" content="Trang thông tin và giới thiệu chung về giáo xứ An Phú giáo phận Phú Cường." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/church.jpeg" />
-        <meta name="keywords" content="relevant, keywords, separated, by, commas" />
-        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="Giáo xứ an phú" />
+        <meta property="og:description" content="Trang thông tin và giới thiệu chung về giáo xứ An Phú giáo phận Phú Cường.." />
+        <meta property="og:image" content="https://webmanager-kappa.vercel.app/church.jpeg" />
+        <meta property="og:url" content="https://webmanager-kappa.vercel.app/" />
       </Head>
 
       {link === "home" ? (

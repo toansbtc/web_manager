@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+<url><loc>https://webmanager-kappa.vercel.app</loc><lastmod>2025-03-08T07:03:36.287Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/Function/alert_FB_Login_failed</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/Function/excell_export_members</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/Function/fbSDK</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/Function/getDrivePath</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/Function/sendMessageFB</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/Function/sendMessageZalo</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/Function/sessionFunction</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/commonPages/active</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/commonPages/home</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/components/ballot</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/components/navbar</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/components/profile</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/components/quill_editor</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/decladeInterface/authenInterface</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/loadingPages/loadingContext</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/loadingPages/loadingScreen</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/modals/addFatherModal</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/modals/loggin_registerModal</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/profile</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/profile/feedback</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/profile/mass</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/profile/member</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/profile/overview</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/profile/pageAccessToken</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/profile/update</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/rule_term</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/yourngPages</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://webmanager-kappa.vercel.app/views/yourngPages/authen</loc><lastmod>2025-03-08T07:03:36.290Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+</urlset>

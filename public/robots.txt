@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://webmanager-kappa.vercel.app
+
+# Sitemaps
+Sitemap: https://webmanager-kappa.vercel.app/sitemap.xml
