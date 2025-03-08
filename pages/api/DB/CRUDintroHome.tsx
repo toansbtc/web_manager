@@ -2,6 +2,7 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import ActionDB from "./actionDB"
 import prisma from "./prisma";
+import connectionDB from "./MongoDB/mongoose";
 
 // const prisma = new PrismaClient({
 //     log: ["error"],
@@ -9,6 +10,11 @@ import prisma from "./prisma";
 
 // prisma.$connect()
 export default async function prisma_sql(req: NextApiRequest, res: NextApiResponse) {
+
+
+    // load when open web
+    await connectionDB()
+
     const action = req.body.action;
     const formData = req.body.data;
     let result = null;

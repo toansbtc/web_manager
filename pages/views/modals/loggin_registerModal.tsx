@@ -106,9 +106,9 @@ export default function loggin_registerModal() {
     }
     setIsLoading(true)
     const response = await axios.post('/api/DB/CRUDaccountRole',
-      { "action": actionDB.NATIVESQL, "data": { "sql": `select role,user_token as username from account_role where user_token='${formData.email}' and password='${formData.password}'and is_active=true` } })
+      { "action": "LOGIN", "data": { "user_token": formData.email, "password": formData.password } })
 
-    const user_data = response.data[0];
+    const user_data = response.data;
 
     console.log("this is user data", user_data)
 
@@ -147,7 +147,7 @@ export default function loggin_registerModal() {
 
       // check user had regiter befor login
 
-      window.FB.login(
+      const loggin = () => window.FB.login(
         function (res: any) {
           if (res.authResponse) {
             console.log(res)
@@ -167,6 +167,7 @@ export default function loggin_registerModal() {
         }
       )
 
+      return await loggin();
       // if (user.metadata.creationTime === user.metadata.lastSignInTime) {
       //   user.delete();
       //   alert("Bạn phải đăng ký tài khoản bằng FB trước khi đăng nhập!!!")
@@ -275,7 +276,9 @@ export default function loggin_registerModal() {
   }
 
 
+  const zalo_Login = async () => {
 
+  }
 
 
 

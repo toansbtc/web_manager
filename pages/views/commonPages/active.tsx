@@ -3,7 +3,7 @@ import { fetchActiveImage, updateActiveImage } from '@/pages/api/redux/activeDat
 import { appDispatch, rootState } from '@/pages/api/redux/store';
 import axios from 'axios';
 import { error } from 'console';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useLoading } from '../loadingPages/loadingContext';
 import getItemSession from '../Function/sessionFunction';
@@ -29,6 +29,9 @@ export default function active() {
   const [id, setID] = useState<number>(-1);
 
 
+  const parentImage = useRef(null);
+
+
   useEffect(() => {
     if (getItemSession() !== 'undefined') {
       setUser(JSON.parse(getItemSession()))
@@ -43,7 +46,7 @@ export default function active() {
   }, [dispatch])
 
   useEffect(() => {
-    if (loadImage)
+    if (loadImage && !parentImage.current)
       setIsLoading(true)
     else
       setIsLoading(false)
@@ -253,7 +256,7 @@ export default function active() {
 
 
       <div className="pt-0">
-        <div className='h-100 bg-danger-subtle text-center'><h2 style={{ color: '#76109fe0' }}>Các hoạt động Giáo Xứ</h2></div>
+        <div ref={parentImage} className='h-100 bg-danger-subtle text-center'><h2 style={{ color: '#76109fe0' }}>Các hoạt động Giáo Xứ</h2></div>
         {(user.role === 0 || user.role === 1) && <div className='w-100 text-center'>
           <button className="btn btn-success " onClick={() => { setShow(true), setID(-1) }}>
             Thêm mới

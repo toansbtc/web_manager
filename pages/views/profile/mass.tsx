@@ -19,8 +19,8 @@ export default function mass() {
     const [text1, setText1] = useState("");
     const [text2, setText2] = useState("");
 
-    const [MemberRead, setMemberRead] = useState<{ id: String, name: String, read: boolean }[]>([])
-    const [MemberNotRead, setMemberNotRead] = useState<{ id: String, name: String, read: boolean }[]>([])
+    const [MemberRead, setMemberRead] = useState<{ id: string, name: string, read: boolean }[]>([])
+    const [MemberNotRead, setMemberNotRead] = useState<{ id: string, name: string, read: boolean }[]>([])
 
     useEffect(() => {
         setMemberMass(() => {
@@ -29,7 +29,7 @@ export default function mass() {
         const arrayMemberCanRead = []
         const arrayMemberNotRead = []
         member.map(value => {
-            if (value?.infor?.canRead === true) {
+            if (value?.infor?.can_read === true) {
                 arrayMemberCanRead.push({ id: value?.user_token, name: value?.infor.name, read: value.infor.reading })
             }
             else {
@@ -84,7 +84,10 @@ export default function mass() {
                     if (read3?.status === 200) {
                         result = await axios.post('/api/DB/CRUDinfor', {
                             "action": actionDB.UPDATEMANY,
-                            "data": arraySet
+                            "data": {
+                                "data": arraySet,
+                                "actionUpdateMany": "updateReading"
+                            }
                         })
                     }
                     if (result?.status === 200)
@@ -112,7 +115,7 @@ export default function mass() {
         else {
             const confirm_reset = confirm("reset")
             if (confirm_reset) {
-                const result = await axios.post('/api/DB/CRUDaccountRole', { "action": actionDB.NATIVESQL, "data": { "sql": "update infor set reading=false where user_token_infor!='admin'" } })
+                const result = await axios.post('/api/DB/CRUDaccountRole', { "action": actionDB.NATIVESQL, "data": { "sql": "update infor set reading=false where user_token_infor!='admin' and can_read==true" } })
 
                 if (result.data) {
                     await dispatch(fetchYoungMember())
@@ -147,9 +150,54 @@ export default function mass() {
                     return array.filter(member => member.id !== object.id)
                 })
                 break;
-                break;
             default:
                 break;
+        }
+
+    }
+
+
+    const saveChangeMemberReading = async () => {
+        let listIdNotRead: string = "("
+        MemberNotRead.map(value => {
+            listIdNotRead += "'" + value.id + "'"
+        })
+        listIdNotRead += ")"
+        let sql = '';
+        if (listIdNotRead.length > 2)
+            sql = "update infor set reading=false,can_read=false where user_token_infor in " + listIdNotRead
+        const resultUpdateInfor = await axios.post("/api/DB/CRUDinfor", {
+            "action": actionDB.UPDATEMANY, "data": {
+                "actionUpdateMany": "editReadingMember",
+                "sql": sql,
+                "data": MemberRead
+            }
+        })
+        if (resultUpdateInfor.status == 200) {
+            MemberNotRead.forEach(value => {
+                const index = memberMass.findIndex(mem => mem.user_token === value.id)
+                if (index !== -1) {
+                    memberMass[index] = {
+                        ...memberMass[index], infor: {
+                            ...memberMass[index].infor, reading: false, can_read: false
+                        }
+                    }
+                }
+            })
+            MemberRead.forEach(value => {
+                const index = memberMass.findIndex(mem => mem.user_token === value.id)
+                if (index !== -1) {
+                    memberMass[index] = {
+                        ...memberMass[index], infor: {
+                            ...memberMass[index].infor, reading: value.read, can_read: true
+                        }
+                    }
+                }
+            })
+            console.log("MemberRead", memberMass)
+            dispatch(updateMember(memberMass))
+            // await dispatch(fetchYoungMember())
+            alert('Lưu thay đổi thành công')
         }
 
     }
@@ -167,11 +215,20 @@ export default function mass() {
                 <div className="p-3 border-4 rounded-4 shadow-lg col-lg-6 col-md-6 col-sm-12">
                     <h4 className="text-primary text-center fw-bold">left </h4>
                     <div style={{ maxHeight: 500 }} className=" overflow-y-scroll">
-                        {MemberRead.map(item => (
-                            <div className="d-flex justify-content-between align-items-center border-bottom p-2">
-                                <span className="fw-bold ">{item.name}</span>
-                                <label htmlFor="">{item.read ? "read" : "not yet"}</label>
-                                <i onClick={() => changeMemberReading("delete", item)}>-</i>
+                        {MemberRead.map((item, key) => (
+                            <div key={key} className="d-flex justify-content-between align-items-center border-bottom ">
+                                <span className="fw-bold w-75">{item.name}</span>
+                                <input type='checkbox' checked={item.read} onChange={() => {
+                                    setMemberRead((pre) => {
+                                        let memberReadChange = [...pre]
+                                        const index = memberReadChange.findIndex(value => value.id === item.id)
+                                        if (index !== -1) {
+                                            memberReadChange[index] = { ...memberReadChange[index], read: !item.read }
+                                        }
+                                        return memberReadChange
+                                    })
+                                }} />
+                                <i onClick={() => changeMemberReading("delete", item)} >-</i>
                             </div>
                         ))}
                     </div>
@@ -180,8 +237,8 @@ export default function mass() {
                 <div className=" p-3 border-5 rounded-4 shadow-sm col-lg-6 col-md-6 col-sm-12">
                     <h4 className="text-success text-center fw-bold">right</h4>
                     <div style={{ maxHeight: 500 }} className=" overflow-y-scroll">
-                        {MemberNotRead.map(item => (
-                            <div className="d-flex justify-content-between align-items-center border-bottom p-2">
+                        {MemberNotRead.map((item, key) => (
+                            <div key={key} className="d-flex justify-content-between align-items-center border-bottom p-2">
                                 <span className="fw-bold">{item.name}</span>
                                 <i onClick={() => changeMemberReading("add", item)}>+</i>
                             </div>
@@ -189,7 +246,8 @@ export default function mass() {
                     </div>
                 </div>
                 <div className='d-flex justify-content-end align-content-center mt-3'>
-                    <button className='bg-danger-subtle border-0' onClick={() => axios.post('/api/controller/sendMessageToNumberPhone', { "recivedNumberPhone": '+84327580849', "message": "xin chào" })}>Lưu thay đổi</button>
+                    <button className='bg-warning border-0' onClick={saveChangeMemberReading}>Lưu thay đổi</button>
+                    {/* axios.post('/api/controller/sendMessageToNumberPhone', { "recivedNumberPhone": '+84327580849', "message": "xin chào" }) */}
                 </div>
 
             </div>

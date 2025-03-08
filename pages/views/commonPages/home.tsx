@@ -29,6 +29,7 @@ export default function home() {
     const [fatherInfor, setFatherInfor] = useState({})
     const [editInfor, setEditInfor] = useState(false)
     const [user, setUser] = useState({ "role": 1000, "username": "anonimous" });
+    const [formData, setFormData] = useState({ name: '', numberPhone: '', feedback: '', title: '' })
 
     useEffect(() => {
         if (getItemSession() !== 'undefined') {
@@ -43,15 +44,12 @@ export default function home() {
             console.log("data redux change datadescription")
             setDescription(dataDescription)
         }
-    }, [dataDescription])
-
-
-    useEffect(() => {
         if (dataFatherIntro) {
             console.log("data redux change dataFatherIntro")
             setInforList(dataFatherIntro)
         }
-    }, [dataFatherIntro])
+    }, [dataDescription, dataFatherIntro])
+
 
 
     function formatTime(time: string) {
@@ -135,6 +133,55 @@ export default function home() {
     const openCloseQuill = (option) => {
         setEditInfor(option);
         setFatherInfor({})
+    }
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    }
+
+    const handleSendFeedback = async (e) => {
+        e.preventDefault()
+        setIsLoading(true)
+        try {
+            const regexNmberPhone = /^(03|07|08|09|01[2-9])\d{8,9}$/
+            if (formData.feedback !== '' && formData.name !== '' && formData.title !== '' && formData.numberPhone !== '')
+                if (formData.numberPhone.match(regexNmberPhone)) {
+
+                    if (formData.feedback.length > 50) {
+                        alert("Ý kiến đóng góp ít nhất 50 ký tự!")
+                        return
+                    }
+
+                    // const resultFeedback = await axios.post('/api/DB/MongoDB/CRUDmongoDB', { "action": actionDB.GETDATA })
+                    // console.log(resultFeedback.data)
+                    const resultFeedback = await axios.post('/api/DB/MongoDB/CRUDmongoDB',
+                        {
+                            "action": actionDB.CREATE,
+                            "data": formData
+                        })
+                    if (resultFeedback.status === 200) {
+                        alert("Đã gửi ý kiến của bạn thành công!")
+                        setFormData({
+                            ...formData,
+                            feedback: '',
+                            title: ''
+                        })
+                    }
+                    else {
+                        alert("Hòm thư đã đầy xin vui lòng gửi ý kiến lại sau!")
+                    }
+                }
+                else
+                    alert("Số điện thoại không đúng định dạng!!")
+        } catch (error) {
+            console.error(error)
+        }
+        finally {
+            setIsLoading(false)
+        }
     }
 
 
@@ -236,6 +283,88 @@ export default function home() {
             </div>
 
             {modalAddFarther && (<div style={{ position: 'fixed', justifyContent: 'center', alignContent: 'center' }}><AddFatherModal controlModal={openCloseAddFather} loadList={() => { }} fatherIntro={fatherInfor} /></div>)}
+
+
+
+
+            <footer style={{ backgroundColor: 'rgb(85 99 133 / 88%)' }} className="text-light py-5">
+                <form onSubmit={handleSendFeedback} className="container-lg">
+                    <div className="row">
+
+                        {/* Left Column - Google Map */}
+                        <div className="col-md-6 ">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7834.569468380444!2d106.74253537617194!3d10.941850921179594!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3174d9e99a667a11%3A0x1bb8144e920377c7!2zTmjDoCBUaOG7nSBHacOhbyB44bupIEFuIFBow7o!5e0!3m2!1svi!2s!4v1741401938501!5m2!1svi!2s"
+                                width="100%" height="100%"
+                                style={{ border: 0 }}
+                                allowFullScreen loading="lazy"
+                                referrerPolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+
+
+                        <div className="col-md-6 text-center mt-3 mb-1 ">
+
+                            <div className="needs-validation border border-light rounded p-2">
+                                <div className='w-100 text-center text-info '><h4>Ý kiến đóng góp</h4></div>
+                                <div className="row">
+                                    <div className="col">
+                                        <input
+                                            type="text"
+                                            className="form-control mb-2"
+                                            placeholder="Họ tên"
+                                            name='name'
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col">
+                                        <input
+                                            type="tel"
+                                            className="form-control mb-2"
+                                            placeholder="Điện thoại liên hệ"
+                                            name="numberPhone"
+                                            value={formData.numberPhone}
+                                            onChange={handleChange}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <input
+                                    type="text"
+                                    className="form-control mb-2"
+                                    placeholder="Tiêu đề - tóm tắt nội dung ý kiến"
+                                    name="title"
+                                    value={formData.title}
+                                    onChange={handleChange}
+                                    required
+                                />
+
+                                <textarea
+                                    className="form-control mb-2"
+                                    placeholder="Ý kiến của bạn"
+                                    name="feedback"
+                                    value={formData.feedback}
+                                    onChange={handleChange}
+                                    required
+                                ></textarea>
+
+                                <button type='submit' className="btn btn-dark w-100">
+                                    Gửi ý kiến
+                                </button>
+                            </div>
+                            <div className="text-center mt-4">
+                                <p className="text-light">© {new Date().getFullYear()} My Website. All rights reserved.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer Bottom */}
+
+                </form>
+
+            </footer>
         </div>
     )
 };
@@ -283,7 +412,8 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: '20px',
-        background: "linear-gradient(152deg, #5f88fff5, #d509c67d, #df1c1ccc)",
+        paddingBottom: '20px',
+        background: "linear-gradient(152deg, #458bd5f5, #95ff5f26, #ccebe0ad, #fff8fe7d, #13d0e3bf)",
     },
     gridItem: {
         textAlign: 'center',

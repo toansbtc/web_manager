@@ -7,7 +7,7 @@ import getDrivePath from '../Function/getDrivePath';
 import axios from 'axios';
 import actionDB from '@/pages/api/DB/actionDB';
 // import XLSX from 'xlsx'
-// import { updateMember as updateMembers } from '@/pages/api/redux/youngDataSlide';
+import { updateMember as updateMembers } from '@/pages/api/redux/youngDataSlide';
 
 const statusMap: Record<string, string> = {
     single: "Độc thân",
@@ -177,7 +177,24 @@ export default function member() {
         }
     }
 
-
+    async function deleteMember(id, name) {
+        const confirmDelete = confirm(`Bạn chắc chắn muốn xóa ${name}`)
+        if (confirmDelete) {
+            try {
+                const resultDelete = await axios.post('/api/DB/CRUDaccountRole', { "action": actionDB.DELETE, "data": { "user_token": id } })
+                if (resultDelete.status === 200) {
+                    const afterDeleteMember = updateMember.filter(data => data.user_token !== id)
+                    dispatch(updateMembers(afterDeleteMember))
+                    alert("Đã xóa thành công thành viên: " + name)
+                }
+                else {
+                    alert("Xóa không thành công")
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
 
     return (
         <div className="container ">
@@ -298,7 +315,7 @@ export default function member() {
                                         </select>
                                     }
                                     {/* <div className='col-md-12 sp d-flex align-content-center justify-content-start'> */}
-                                    <button className='btn btn-danger w-100'>Xóa thành viên</button>
+                                    <button onClick={() => deleteMember(member.user_token, member?.infor?.name)} className='btn btn-danger w-100'>Xóa thành viên</button>
                                     {/* <button className={`btn  col-md-5 mx-2 ${member.active !== true ? "btn-light" : "btn-dark"}`} onClick={() => lockAccount(member.user_token, member.active)}>{member.active === true ? "Khóa tài khoản" : "Mở tài khoản"}</button> */}
 
                                     {/* </div> */}

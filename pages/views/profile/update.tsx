@@ -74,8 +74,8 @@ export default function update() {
     };
 
 
-    function validateForm() {
-        console.log
+    async function validateForm() {
+
 
         if (formData.number_phone.length < 10 || formData.number_phone.length > 12) {
 
@@ -170,7 +170,7 @@ export default function update() {
 
             <div className="row mb-3">
                 <div className="col-md-6">
-                    <label htmlFor="number_phone" className="form-label">Điện thoại liên hệ:</label>
+                    <label htmlFor="number_phone" className="form-label">SĐT đã đăng ký zalo:</label>
                     <input
                         type="number"
                         className="form-control"

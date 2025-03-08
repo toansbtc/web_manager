@@ -12,7 +12,7 @@ export function setItemSession(key: string, value, expired: number = 1800) {
         value: value
     }
     if (typeof window !== 'undefined') {
-        sessionStorage.setItem(key, JSON.stringify(item));
+        sessionStorage.setItem(key, JSON.stringify(item).replace("user_token", "username"));
     }
 
 }

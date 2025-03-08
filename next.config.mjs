@@ -2,6 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
 
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "drive.google.com",
+      },
+    ],
+  },
   // i18n: {
   //   locales: ["en","vi"], // Supported languages
   //   defaultLocale: "vi",        // Default language
@@ -21,6 +29,10 @@ const nextConfig = {
       {
         source: '/profile',
         destination: '/views/profile',
+      },
+      {
+        source: '/feedback',
+        destination: '/views/profile/feedback',
       },
     ];
   },

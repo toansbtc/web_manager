@@ -33,15 +33,16 @@ model infor {
   birth_day         String?
   name              String?
   number_phone      String?
+  zalo_UID          String?
   address           String?
   situation         String?
   job               String?
   self_introduc     String?
   reading           Boolean      @default(false)
-  can_read          Int          @default(0)
+  can_read          Boolean      @default(false)
   id_avata_img_path Int?
   image_path        image_path?  @relation(fields: [id_avata_img_path], references: [id_image_path], onDelete: Cascade, map: "fk_image_path")
-  account_role      account_role @relation("accountRole_Infor", fields: [user_token_infor], references: [user_token])
+  account_role      account_role @relation("accountRole_Infor", fields: [user_token_infor], references: [user_token], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.

@@ -30,20 +30,47 @@ export default async function prisma_sql(req: NextApiRequest, res: NextApiRespon
                 })
                 break;
             case ActionDB.UPDATEMANY:
-                result = await prisma.$transaction(
-                    formData.map(value => {
+                switch (formData.actionUpdateMany) {
+                    case "editReadingMember":
+                        console.log(formData.sql)
+                        const update = await prisma.$queryRaw(Prisma.sql([formData.sql]))
+                        if (update)
+                            result = await prisma.$transaction(
 
-                        return prisma.infor.update({
-                            data: {
-                                reading: true
-                            },
-                            where: {
-                                user_token_infor: value.user_token
-                            }
-                        })
+                                formData.data.map(value => {
+                                    return prisma.infor.update({
+                                        where: {
+                                            user_token_infor: value.id
+                                        },
+                                        data: {
+                                            reading: value.read,
+                                            can_read: true
+                                        }
+                                    })
+                                })
+                            )
 
-                    })
-                )
+                        break;
+                    case "updateReading":
+                        result = await prisma.$transaction(
+                            formData.data.map(value => {
+
+                                return prisma.infor.update({
+                                    data: {
+                                        reading: true
+                                    },
+                                    where: {
+                                        user_token_infor: value.user_token
+                                    }
+                                })
+
+                            })
+                        )
+                        break;
+
+                    default:
+                        break;
+                }
                 break;
             case ActionDB.CREATE:
                 result = await prisma.infor.create({

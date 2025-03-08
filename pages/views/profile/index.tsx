@@ -18,7 +18,7 @@ import Head from "next/head";
 
 
 
-type page = "overview" | "member" | "updateInfor" | "adminManageMember" | "mass"
+type page = "overview" | "member" | "updateInfor" | "adminManageMember" | "mass" | "feedBack"
 
 export default function ProfilePage() {
     const [collapsed, setCollapsed] = useState(false);

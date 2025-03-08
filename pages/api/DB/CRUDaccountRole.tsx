@@ -18,6 +18,21 @@ export default async function prisma_sql(req: NextApiRequest, res: NextApiRespon
                 const sql = formData.sql;
                 result = await prisma.$queryRaw(Prisma.sql([sql]))
                 break;
+            case "LOGIN":
+                console.log(formData)
+                result = await prisma.account_role.findUnique({
+                    where: {
+                        user_token: formData.user_token,
+                        password: formData.password,
+                        is_active: true
+                    },
+                    select: {
+                        user_token: true,
+                        role: true
+                    }
+                })
+                console.log(result)
+                break;
             case ActionDB.GETLISTDATA:
                 result = await prisma.account_role.findMany({
                     select: {
@@ -33,6 +48,7 @@ export default async function prisma_sql(req: NextApiRequest, res: NextApiRespon
                                 situation: true,
                                 job: true,
                                 reading: true,
+                                can_read: true,
                                 self_introduc: true,
                                 image_path: true
 

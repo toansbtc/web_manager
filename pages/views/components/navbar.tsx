@@ -48,11 +48,11 @@ export default function navbar({ setLink, style, color }) {
                     {/* <span className='text-white' style={{ marginRight: 10 }}>Logo home</span> */}
                 </button>
             </div>
-            <button className="navbar-toggler" type="button"
+            <a className="navbar-toggler" type="button"
                 onClick={() => showElement('navbarCollapse')}
             >
-                <span className="navbar-toggler-icon"></span>
-            </button>
+                <span className={`${color !== '' ? 'bg-dark-subtle' : ''} navbar-toggler-icon`}></span>
+            </a>
             <div className="navbar-collapse collapse " id="navbarCollapse">
                 <ul className="navbar-nav ms-auto me-auto">
                     <li className="nav-item active">
@@ -69,7 +69,7 @@ export default function navbar({ setLink, style, color }) {
                 <div className="mr-auto justify-content-between" style={{ paddingRight: 10 }}>
 
                     <div className="dropdown">
-                        <span className={`${color !== '' ? color : 'text-light'}`} style={{ fontSize: 18, fontFamily: 'cursive', marginRight: 5 }}>{user?.role ? `${infor.infor?.name ? infor.infor?.name : 'No name'}` : 'Anonymous'}</span>
+                        <span className={`${color !== '' ? color : 'text-light'}`} style={{ fontSize: 18, fontFamily: 'cursive', marginRight: 5 }}>{user?.role === 0 ? 'Admin' : user?.role ? `${infor.infor?.name ? infor.infor?.name : 'No name'}` : 'Anonymous'}</span>
                         <button
                             className="btn bg-dark dropdown-toggle"
                             style={{ color: 'white' }}
@@ -100,9 +100,9 @@ export default function navbar({ setLink, style, color }) {
                                             Đăng xuất
                                         </li>
                                         <li onClick={() => {
-                                            router.replace('/profile')
+                                            user.role === 10 ? router.replace('/feedback') : router.replace('/profile')
                                         }}>
-                                            Hồ sơ
+                                            {user.role === 10 ? 'Hòm thư' : 'Hồ sơ'}
                                         </li>
                                     </>
                                 )}
